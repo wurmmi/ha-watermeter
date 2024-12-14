@@ -80,7 +80,7 @@ external_components:
   # uses the latest version from SzczepanLeon (wM-Bus 2.1.10)
   # https://github.com/SzczepanLeon/esphome-components
   # You can make ESPHome check the repository every time by setting this option to 0s
-  - source: github://SzczepanLeon/esphome-components@main
+  - source: github://SzczepanLeon/esphome-components@3.2.3
     refresh: 0s
     components: [wmbus]
 
@@ -217,21 +217,15 @@ globals:
 ## ---------------------------------------------------
 wifi:
   networks:
-   # unifi accesspoint 2.4Ghz
-    - ssid: !secret ssid4_name
-      password: !secret ssid4_pswd
+    - ssid: !secret ssid1_name
+      password: !secret ssid1_pswd
       priority: 1
-    # office apple capsulate accesspoint 2.4Ghz
-    - ssid: !secret ssid3_name
-      password: !secret ssid3_pswd
-      priority: 2
-    # living room apple capsulate accesspoint 2.4Ghz
     - ssid: !secret ssid2_name
       password: !secret ssid2_pswd
-      priority: 3
+      priority: 2
   domain: !secret domain
   ap:
-    # ssid (Optional, string): The name of the access point to create. Leave empty to use the device name.  
+    # ssid (Optional, string): The name of the access point to create. Leave empty to use the device name.
     password: !secret app_pswd
 
 ## ---------------------------------------------------
@@ -251,35 +245,38 @@ captive_portal:
 ## ---------------------------------------------------
 ## OTA COMPONENT
 ## ---------------------------------------------------
+# safe_mode:
+#   disabled: true
+
 ota:
-  password: !secret ota_pswd
-  safe_mode: false
-  on_begin:
-    then:
-      - logger.log:
-          format: "OTA Start"
-          tag: "OTA"
-          level: WARN
-  on_progress:
-    then:
-      - logger.log:
-          level: WARN
-          tag: "OTA"
-          format: "OTA progress %0.1f%%"
-          args: ["x"]
-  on_end:
-    then:
-      - logger.log:
-          format: "OTA End"
-          tag: "OTA"
-          level: WARN
-  on_error:
-    then:
-      - logger.log:
-          format: "OTA update error %d"
-          tag: "OTA"
-          level: ERROR
-          args: ["x"]
+  - platform: esphome
+    password: !secret ota_pswd
+    on_begin:
+      then:
+        - logger.log:
+            format: "OTA Start"
+            tag: "OTA"
+            level: WARN
+    on_progress:
+      then:
+        - logger.log:
+            level: WARN
+            tag: "OTA"
+            format: "OTA progress %0.1f%%"
+            args: ["x"]
+    on_end:
+      then:
+        - logger.log:
+            format: "OTA End"
+            tag: "OTA"
+            level: WARN
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            tag: "OTA"
+            level: ERROR
+            args: ["x"]
 
 ## ---------------------------------------------------
 ## COMPONENT WEBSERVER
@@ -410,10 +407,9 @@ time:
     id: time_sntp
     timezone: Europe/Berlin
     servers:
-      - !secret local_sntp
       - 0.at.pool.ntp.org
       - 0.pool.ntp.org
-      # - 1.pool.ntp.org
+      - 1.pool.ntp.org
 
     on_time_sync:
       # Components should trigger on_time_sync when they update the system clock.
