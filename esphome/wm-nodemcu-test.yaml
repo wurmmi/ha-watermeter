@@ -29,9 +29,9 @@ substitutions:
   appversion: "2.0.7"
 
   ## logger settings
-  log_level: "DEBUG"  # not that logging need memory, so in production mode use "WARN"
-  log_wmbus: "DEBUG" # Loglevel for wmbus meters component
-  log_baudrate: "0" # 0 disable uart logger messages
+  log_level: "VERBOSE"  # not that logging need memory, so in production mode use "WARN"
+  log_wmbus: "VERBOSE" # Loglevel for wmbus meters component
+  log_baudrate: "115200" # 0 disable uart logger messages
 
 # ----------------------------------------------------------------
 # HARDWARE:  NODEMCU V3 ESP8266 80MHz, 80KB RAM, 4MB Flash
@@ -80,7 +80,7 @@ external_components:
   # uses the latest version from SzczepanLeon
   # https://github.com/SzczepanLeon/esphome-components
   # You can make ESPHome check the repository every time by setting this option to 0s
-  - source: github://SzczepanLeon/esphome-components@main
+  - source: github://SzczepanLeon/esphome-components@3.2.3
     refresh: 0s
     components: [wmbus]
 
@@ -134,9 +134,6 @@ globals:
 wifi:
   id: wifi_nodemcu
   networks:
-    - ssid: !secret ssid3_name
-      password: !secret ssid3_pswd
-      priority: 0
     - ssid: !secret ssid1_name
       password: !secret ssid1_pswd
       priority: 1
@@ -173,35 +170,38 @@ logger:
 ## ---------------------------------------------------
 ## OTA COMPONENT
 ## ---------------------------------------------------
+# safe_mode:
+#   disabled: true
+
 ota:
-  password: !secret ota_pswd
-  safe_mode: false
-  on_begin:
-    then:
-      - logger.log:
-          format: "OTA Start"
-          tag: "OTA"
-          level: WARN
-  on_progress:
-    then:
-      - logger.log:
-          level: WARN
-          tag: "OTA"
-          format: "OTA progress %0.1f%%"
-          args: ["x"]
-  on_end:
-    then:
-      - logger.log:
-          format: "OTA End"
-          tag: "OTA"
-          level: WARN
-  on_error:
-    then:
-      - logger.log:
-          format: "OTA update error %d"
-          tag: "OTA"
-          level: ERROR
-          args: ["x"]
+  - platform: esphome
+    password: !secret ota_pswd
+    on_begin:
+      then:
+        - logger.log:
+            format: "OTA Start"
+            tag: "OTA"
+            level: WARN
+    on_progress:
+      then:
+        - logger.log:
+            level: WARN
+            tag: "OTA"
+            format: "OTA progress %0.1f%%"
+            args: ["x"]
+    on_end:
+      then:
+        - logger.log:
+            format: "OTA End"
+            tag: "OTA"
+            level: WARN
+    on_error:
+      then:
+        - logger.log:
+            format: "OTA update error %d"
+            tag: "OTA"
+            level: ERROR
+            args: ["x"]
 
 ## ---------------------------------------------------
 ## COMPONENT WEBSERVER
@@ -269,8 +269,12 @@ wmbus:
   gdo0_pin: GPIO05  #D1  7: Clock output. High Impedance !
   gdo2_pin: GPIO04  #D2  6: FIFO status signals. High Impedance !
 
-  # log_unknown (Optional): Show telegrams from not configured meters in log. Defaults to False
+  led_pin: GPIO0
+  led_blink_time: "1s"
+
+  frequency: 868.950
   log_unknown: True
+  sync_mode: True
 
 ## ---------------------------------------------------
 ## SWITCHES
