@@ -137,3 +137,5 @@ dmypy.json
 .pyre/
 data/43430778.json
 esphome/develop_esphome.code-workspace
+
+/.esphome
