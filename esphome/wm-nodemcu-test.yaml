@@ -137,6 +137,10 @@ wifi:
     - ssid: !secret ssid1_name
       password: !secret ssid1_pswd
       priority: 1
+      manual_ip:
+        static_ip: 192.168.0.207
+        gateway: 192.168.0.1
+        subnet: 255.255.255.0
     - ssid: !secret ssid2_name
       password: !secret ssid2_pswd
       priority: 2
@@ -317,7 +321,8 @@ sensor:
     # see: https://github.com/SzczepanLeon/esphome-components/issues/6
     # edit watermeterid in the secrets file
     # settings to add the watermeterid to the lqi, rssi and total_water_m3
-    meter_id: "0" # !secret watermeterId
+    # meter_id: "0" # !secret watermeterId
+    meter_id: !secret watermeterId
     type: izar
     add_prefix: true
 
