@@ -220,9 +220,17 @@ wifi:
     - ssid: !secret ssid1_name
       password: !secret ssid1_pswd
       priority: 1
+      manual_ip:
+        static_ip: 192.168.0.207
+        gateway: 192.168.0.1
+        subnet: 255.255.255.0
     - ssid: !secret ssid2_name
       password: !secret ssid2_pswd
       priority: 2
+      manual_ip:
+        static_ip: 192.168.0.207
+        gateway: 192.168.0.1
+        subnet: 255.255.255.0
   domain: !secret domain
   ap:
     # ssid (Optional, string): The name of the access point to create. Leave empty to use the device name.
